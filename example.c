@@ -15,7 +15,7 @@ int main(void)
 
         printf("Queue test!\n");
 
-        ret = queue_init(&queue, 125);
+        ret = queue_init(&queue, 25);
         if (ret < 0) {
                 printf("queue init error!\n");
                 goto error;

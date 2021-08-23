@@ -59,10 +59,13 @@ int queue_in(queue_struct_typedef *queue_struct,
                 goto out;
         }
 
-        if((queue_struct->vaild_num + len) > queue_struct->size) {
+        if(queue_struct->vaild_num == queue_struct->size) {
                 ret = -1;
                 goto out;
         }
+
+        if((queue_struct->vaild_num + len) > queue_struct->size)
+                len = queue_struct->size - queue_struct->vaild_num;
 
         pthread_mutex_lock(&queue_mutex);
         for(i=0; i<len; i++) {
@@ -91,7 +94,7 @@ int queue_out(queue_struct_typedef *queue_struct,
                 goto out;
         }
         if(queue_struct->vaild_num ==  0) {
-                ret = -1;
+                ret = 0;
                 goto out;
         }
 
