@@ -84,7 +84,7 @@ int queue_out(queue_struct_typedef *queue_struct,
                 int len)
 {
         int ret = 0, i = 0;
-        int vaild_index = 0;
+        int queue_head = 0;
         if(queue_struct == NULL) {
                 ret = -1;
                 goto out;
@@ -104,15 +104,47 @@ int queue_out(queue_struct_typedef *queue_struct,
 
         pthread_mutex_lock(&queue_mutex);
         for(i=0; i<len; i++) {
-                vaild_index = (queue_struct->index + queue_struct->size
+                queue_head = (queue_struct->index + queue_struct->size
                                - queue_struct->vaild_num) % (queue_struct->size);
-                *(data+i) = queue_struct->queue[vaild_index];
-                queue_struct->queue[vaild_index] = 0;
+                *(data+i) = queue_struct->queue[queue_head];
+                queue_struct->queue[queue_head] = 0;
                 queue_struct->vaild_num --;
         }
         pthread_mutex_unlock(&queue_mutex);
 
 out:
+        return ret;
+}
+
+int queue_pre_out(queue_struct_typedef *queue_struct,
+                  unsigned char *data,
+                  int len,
+                  int offset)
+{
+        int ret = 0, i = 0;
+        int queue_head = 0;
+
+        if((data == NULL) || (queue_struct == NULL)) {
+                ret = -1;
+                goto error;
+        }
+
+        pthread_mutex_lock(&queue_mutex);
+        if((len+offset) > queue_struct->vaild_num) {
+                ret = -1;
+                goto error;
+        }
+        queue_head = (queue_struct->index + queue_struct->size
+                      - queue_struct->vaild_num) % (queue_struct->size);
+        queue_head = queue_head + offset;
+        for(i = 0; i < len; i++) {
+                *(data+i) = queue_struct->queue[queue_head];
+                queue_head = (++queue_head) % queue_struct->size;
+        }
+        pthread_mutex_unlock(&queue_mutex);
+        ret = len;
+
+error:
         return ret;
 }
 

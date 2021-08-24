@@ -36,6 +36,14 @@ int main(void)
                 }
         }
 
+        ret = queue_pre_out(&queue, rx_buf, 10, 5);
+        if (ret < 0)
+                printf("queue preview out error!\n");
+        printf("queue preview out:");
+        for(int i=0; i<ret; i++)
+                printf("%d ", rx_buf[i]);
+        printf("\n");
+
         for(i = 0; i < 3; i++) {
                 ret = queue_out(&queue, rx_buf, 10);
                 if (ret < 0) {

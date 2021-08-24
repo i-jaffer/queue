@@ -19,5 +19,9 @@ int queue_in(queue_struct_typedef *queue_struct,
 int queue_out(queue_struct_typedef *queue_struct,
               unsigned char *data,
               int len);
+int queue_pre_out(queue_struct_typedef *queue_struct,
+                  unsigned char *data,
+                  int len,
+                  int offset);
 
 #endif
