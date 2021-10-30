@@ -7,6 +7,7 @@ example.o: example.c
 
 lib:
 	gcc queue.c -fPIC -shared -o libqueue.so
+	aarch64-linux-gnu-gcc queue.c -fPIC -shared -o libqueue_arm64.so
 
 clean:
 	rm *.o *.out

@@ -129,11 +129,11 @@ int queue_pre_out(queue_struct_typedef *queue_struct,
                 goto error;
         }
 
-        pthread_mutex_lock(&queue_mutex);
         if((len+offset) > queue_struct->vaild_num) {
                 ret = -1;
                 goto error;
         }
+        pthread_mutex_lock(&queue_mutex);
         queue_head = (queue_struct->index + queue_struct->size
                       - queue_struct->vaild_num) % (queue_struct->size);
         queue_head = queue_head + offset;
