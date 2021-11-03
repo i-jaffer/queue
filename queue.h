@@ -8,6 +8,7 @@ typedef struct queue_stuct {
         int size;
         int index;
         int vaild_num;
+        pthread_mutex_t mutex;
 }queue_struct_typedef;
 
 
