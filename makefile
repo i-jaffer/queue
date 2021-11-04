@@ -1,13 +1,32 @@
-example.out: example.o
-	gcc queue.c -fPIC -shared -o libqueue.so
-	gcc example.o -o example.out -L ./ -lqueue
+DIR_SRC := ./src
+DIR_INC := ./inc
+DIR_LIB := ./lib
+DIR_OBJ := ./obj
 
-example.o: example.c
-	gcc -c example.c -o example.o
+TARGET 	:= $(DIR_OBJ)/example.out
+CC	:= gcc
+CFLAGS	:= -I $(DIR_INC)
 
-lib:
-	gcc queue.c -fPIC -shared -o libqueue.so
-	aarch64-linux-gnu-gcc queue.c -fPIC -shared -o libqueue_arm64.so
+SRC := $(wildcard $(DIR_SRC)/*.c)
+OBJ := $(patsubst %.c, $(DIR_OBJ)/%.o, $(notdir $(SRC)))
 
-clean:
-	rm *.o *.out
+$(TARGET) : $(OBJ)
+	$(CC) $^ -o $@
+
+$(DIR_OBJ)/%.o : $(DIR_SRC)/%.c
+	$(CC) -c $< $(CFLAGS) -o $@
+
+.PHONY : debug
+.PHONY : clean
+.PHONY : lib
+
+lib :
+	$(CC) -fPIC -shared $(DIR_SRC)/queue.c $(CFLAGS) -o $(DIR_LIB)/libqueue.so
+	ar crv $(DIR_LIB)/libqueue.a $(DIR_OBJ)/queue.o
+
+debug :
+	@echo SRC = $(SRC)
+	@echo OBJ = $(OBJ)
+
+clean :
+	-rm $(TARGET) $(DIR_OBJ)/* $(DIR_LIB)/*
